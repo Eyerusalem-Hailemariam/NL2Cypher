@@ -6,7 +6,6 @@ Convert natural language questions into Cypher queries and view results instantl
 - Modern Flask web app for NL-to-Cypher conversion
 - Uses Neo4j as the backend graph database
 - Google Generative AI (Gemini) for query generation
-- Responsive, minimalist black-and-white UI
 - Displays generated Cypher and query results
 
 ## Setup
@@ -34,7 +33,7 @@ Convert natural language questions into Cypher queries and view results instantl
      - `NEO4J_URI` (e.g., `bolt://localhost:7687`)
      - `NEO4J_USER` (Neo4j username)
      - `NEO4J_PASS` (Neo4j password)
-   - `.env` is ignored by git via `.gitignore` to keep secrets safe.
+
 
 4. **Run the app**
    ```bash
