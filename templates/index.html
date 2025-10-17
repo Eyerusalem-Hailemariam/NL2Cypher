@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>NL2Cypher — Natural language to Cypher</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <meta name="description" content="Convert natural language to Cypher queries and run them against Neo4j." />
+</head>
+<body>
+    <main class="container">
+        <header class="hero">
+            <div>
+                <h1>NL2Cypher</h1>
+                <p class="tag">Turn plain English questions into Cypher queries and view results instantly.</p>
+            </div>
+            <div class="logo">Cy</div>
+        </header>
+
+        <section class="card input-card">
+            <label for="question" class="sr">Ask a question</label>
+            <div class="input-row">
+                <input id="question" placeholder="e.g. Which movies did Lana Wachowski direct?" autocomplete="off" />
+                <button id="askBtn" class="btn primary" onclick="sendQuestion()">Ask</button>
+            </div>
+            <div class="helper">Tip: Be specific — include names, years or relationships for better queries.</div>
+        </section>
+
+        <section class="card output-card">
+            <div class="output-header">
+                <h2>Results</h2>
+                <div class="actions">
+                    <button id="copyBtn" class="btn" title="Copy results">Copy</button>
+                </div>
+            </div>
+            <pre id="output" class="output">No results yet. Ask a question above.</pre>
+            <details class="raw">
+                <summary>Raw Cypher (if available)</summary>
+                <pre id="cy" class="raw-code">—</pre>
+            </details>
+        </section>
+
+        <footer class="footer">Built for quick exploration — uses Neo4j and a generative model.</footer>
+    </main>
+
+    <script>
+        const askBtn = document.getElementById('askBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const outputEl = document.getElementById('output');
+        const cyEl = document.getElementById('cy');
+
+        async function sendQuestion() {
+            const question = document.getElementById('question').value.trim();
+            if (!question) return;
+
+            askBtn.disabled = true;
+            askBtn.textContent = 'Thinking...';
+            outputEl.textContent = '';
+            cyEl.textContent = '—';
+
+            try {
+                const res = await fetch('/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `question=${encodeURIComponent(question)}`
+                });
+                const data = await res.json();
+                if (data.error) {
+                    outputEl.textContent = `Error: ${data.error}`;
+                } else {
+                    const result = data.result || 'No results.';
+                    try {
+                        const parsed = JSON.parse(result);
+                        outputEl.textContent = JSON.stringify(parsed, null, 2);
+                    } catch (e) {
+                        outputEl.textContent = result;
+                    }
+                }
+
+                cyEl.textContent = data.cypher || '—';
+            } catch (err) {
+                outputEl.textContent = 'Network error. Check server.';
+            } finally {
+                askBtn.disabled = false;
+                askBtn.textContent = 'Ask';
+            }
+        }
+
+        copyBtn.addEventListener('click', () => {
+            const text = outputEl.textContent;
+            if (!text) return;
+            navigator.clipboard?.writeText(text).then(() => {
+                copyBtn.textContent = 'Copied';
+                setTimeout(() => copyBtn.textContent = 'Copy', 1200);
+            });
+        });
+    </script>
+</body>
+</html>
