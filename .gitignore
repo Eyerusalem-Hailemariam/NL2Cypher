@@ -1,0 +1,30 @@
+# Do not commit secrets
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.eggs/
+
+# Virtual envs
+.venv/
+venv/
+ENV/
+env/
+
+# Build artifacts
+build/
+dist/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
