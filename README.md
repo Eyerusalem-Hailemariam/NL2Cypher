@@ -42,6 +42,7 @@ NEO4J_USER=neo4j
 NEO4J_PASS=your_password
 
 **Usage**
+
 python flask_app.py
 
 
@@ -56,7 +57,3 @@ python flask_app.py
 - Validate & repair query
 
 - Return formatted results
-
-
-git clone https://github.com/your-username/nl2cypher.git
-cd nl2cypher
